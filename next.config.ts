@@ -22,16 +22,26 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 85],
+    // Uploads stored in Vercel Blob
+    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
   },
   async headers() {
+    const noindex = process.env.SITE_NOINDEX === 'true' ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] : []
     return [
-      { source: '/:path*', headers: securityHeaders },
+      { source: '/:path*', headers: [...securityHeaders, ...noindex] },
       { source: '/admin/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
       { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ]
   },
   async redirects() {
     return [
+      // One canonical host: www → apex
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.footography.biz' }],
+        destination: 'https://footography.biz/:path*',
+        permanent: true,
+      },
       // Old static landing page URL
       { source: '/index.html', destination: '/', permanent: true },
       { source: '/home', destination: '/', permanent: true },

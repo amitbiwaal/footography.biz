@@ -1,5 +1,8 @@
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://footography.biz').replace(/\/+$/, '')
 
+/** SITE_NOINDEX=true keeps the whole site out of search engines (staging / pre-launch). Needs a rebuild. */
+export const NOINDEX = process.env.SITE_NOINDEX === 'true'
+
 export const site = {
   name: 'Footography.biz',
   brand: 'Footography',

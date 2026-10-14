@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { absoluteUrl, site } from './site'
+import { NOINDEX, absoluteUrl, site } from './site'
 
 type PageMetaInput = {
   title: string
@@ -26,7 +26,9 @@ export function pageMetadata(input: PageMetaInput): Metadata {
     description: input.description,
     // `alternates` replaces the root layout value, so the RSS link is repeated here
     alternates: { canonical, types: { 'application/rss+xml': [{ url: '/feed.xml', title: `${site.name} Blog` }] } },
-    robots: input.noindex
+    robots: NOINDEX
+      ? { index: false, follow: false }
+      : input.noindex
       ? { index: false, follow: true }
       : { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
     openGraph: {

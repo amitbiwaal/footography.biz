@@ -233,6 +233,10 @@
   background: #fee2e2;
   color: #991b1b;
 }
+.adm-alert-warn {
+  background: #fef3c7;
+  color: #78350f;
+}
 .adm-badge {
   display: inline-block;
   text-transform: capitalize;

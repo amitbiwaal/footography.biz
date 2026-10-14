@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { adminListPosts, adminStats } from '@/lib/posts'
+import { NOINDEX } from '@/lib/site'
 import { formatDate } from '@/lib/text'
 
 export const metadata: Metadata = { title: 'Dashboard' }
@@ -20,6 +21,13 @@ export default async function DashboardPage() {
           ✎ Write new post
         </Link>
       </div>
+
+      {NOINDEX && (
+        <p className="adm-alert adm-alert-warn">
+          Search engines are blocked (SITE_NOINDEX=true). Remove that environment variable and redeploy when the site is ready
+          to be indexed.
+        </p>
+      )}
 
       <div className="adm-stats">
         <div className="adm-stat">

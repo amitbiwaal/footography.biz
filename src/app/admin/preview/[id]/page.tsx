@@ -16,10 +16,7 @@ export default async function PreviewPage({ params }: PageProps<'/admin/preview/
   const post = Number.isInteger(id) ? await adminGetPost(id) : null
   if (!post) notFound()
 
-  const [related, size] = await Promise.all([
-    getRelatedPosts(post),
-    post.coverImage?.startsWith('/media/') ? getMediaDimensions(post.coverImage.slice(7)) : null,
-  ])
+  const [related, size] = await Promise.all([getRelatedPosts(post), getMediaDimensions(post.coverImage)])
 
   return (
     <>

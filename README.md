@@ -32,8 +32,11 @@ npm start            # serves on port 3000 (use -p to change it)
 | `NEXT_PUBLIC_SITE_URL` | Public URL. Used for canonical links, sitemap and OG tags (`https://footography.biz`) |
 | `DATABASE_URL` | `file:./data/footography.db` locally, or `libsql://<db>.turso.io` for Turso |
 | `DATABASE_AUTH_TOKEN` | Only needed for Turso |
+| `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | Set by the Vercel Turso integration. Used when `DATABASE_URL` is not set |
+| `BLOB_READ_WRITE_TOKEN` | Set by Vercel Blob. When present, uploaded images go to Blob instead of the database |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Admin login for `/admin` |
 | `AUTH_SECRET` | Random string, at least 32 characters, used to sign the admin session |
+| `SITE_NOINDEX` | `true` keeps the whole site out of search engines (meta robots, `X-Robots-Tag`, no sitemap in robots.txt). Remove it and redeploy to go live |
 
 `.env.example` lists the same variables. **Change `ADMIN_PASSWORD` before going live.** Changing `AUTH_SECRET` signs out every session.
 
@@ -55,7 +58,9 @@ Notes:
 
 **VPS or any Node host (recommended):** run `npm run build && npm start` behind Nginx or Caddy with HTTPS, or use PM2 to keep it running. Copy `data/footography.db` to the server, because it holds the published blog post and images, and back it up regularly.
 
-**Vercel / serverless:** the file system is read-only there, so use [Turso](https://turso.tech) (hosted libSQL). Set `DATABASE_URL=libsql://…` and `DATABASE_AUTH_TOKEN`. No code changes are needed.
+**Vercel (current setup):** project `footography-biz`. Turso (Vercel Marketplace) stores the posts and Vercel Blob stores the images. Both integrations add their environment variables to the project automatically. Deploy with `vercel deploy --prod`. Large photos are shrunk in the browser before upload, because Vercel functions accept at most 4.5 MB per request.
+
+DNS for `footography.biz` (at the registrar): an `A` record for `@` pointing to Vercel, and a `CNAME` for `www` pointing to the value shown in Vercel → Project → Settings → Domains. `www` redirects to the apex domain.
 
 ## After launch (SEO)
 

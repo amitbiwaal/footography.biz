@@ -15,15 +15,10 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }))
 }
 
-async function coverDimensions(url: string | null) {
-  if (!url?.startsWith('/media/')) return null
-  return getMediaDimensions(url.slice('/media/'.length))
-}
-
 export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): Promise<Metadata> {
   const post = await getPublishedPostBySlug((await params).slug)
   if (!post) return { title: 'Article Not Found', robots: { index: false } }
-  const size = await coverDimensions(post.coverImage)
+  const size = await getMediaDimensions(post.coverImage)
 
   return pageMetadata({
     title: post.metaTitle || post.title,
@@ -50,7 +45,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
   const post = await getPublishedPostBySlug((await params).slug)
   if (!post) notFound()
 
-  const [related, size] = await Promise.all([getRelatedPosts(post), coverDimensions(post.coverImage)])
+  const [related, size] = await Promise.all([getRelatedPosts(post), getMediaDimensions(post.coverImage)])
   const url = absoluteUrl(`/blog/${post.slug}`)
   const crumbs = [
     { name: 'Home', path: '/' },

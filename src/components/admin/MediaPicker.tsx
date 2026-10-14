@@ -13,9 +13,26 @@ type MediaItem = {
   alt: string
 }
 
+// Serverless hosts reject request bodies above ~4.5 MB, so large photos are shrunk in the browser first
+const MAX_DIRECT_UPLOAD = 3.5 * 1024 * 1024
+
+async function shrinkForUpload(file: File): Promise<File> {
+  if (file.size <= MAX_DIRECT_UPLOAD || file.type === 'image/gif') return file
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  const scale = Math.min(1, 2400 / bitmap.width)
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  bitmap.close()
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.9))
+  if (!blob) return file
+  return new File([blob], file.name.replace(/\.[a-z0-9]+$/i, '.webp'), { type: 'image/webp' })
+}
+
 export async function uploadImage(file: File, alt = ''): Promise<MediaItem> {
   const body = new FormData()
-  body.append('file', file)
+  body.append('file', await shrinkForUpload(file))
   body.append('alt', alt)
   const res = await fetch('/api/admin/upload', { method: 'POST', body })
   const data = await res.json().catch(() => ({ error: 'Upload failed.' }))

@@ -8,3 +8,10 @@ data/*.db-*
 .env*.local
 *.tsbuildinfo
 next-env.d.ts
+.vercel
+
+.vercel
+.env*
+!.env.example
+
+.env*

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { SITE_URL, site } from '@/lib/site'
+import { NOINDEX, SITE_URL, site } from '@/lib/site'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   creator: site.name,
   publisher: site.name,
   formatDetection: { telephone: false, email: false, address: false },
+  ...(NOINDEX ? { robots: { index: false, follow: false } } : {}),
   alternates: {
     types: { 'application/rss+xml': [{ url: '/feed.xml', title: `${site.name} Blog` }] },
   },
