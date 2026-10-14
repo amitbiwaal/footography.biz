@@ -1,0 +1,18 @@
+# robots.txt for instafeet.net
+User-agent: *
+Allow: /
+
+# Allow major AI crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://instafeet.net/sitemap.xml
