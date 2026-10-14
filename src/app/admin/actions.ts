@@ -53,6 +53,15 @@ export type SavePostState = {
   slug?: string
 }
 
+/** Refresh every cached public page after a post changes. */
+function refreshPublicPages() {
+  // Home, blog lists, categories and post pages
+  revalidatePath('/', 'layout')
+  // Route handlers are not part of the layout tree; refresh them explicitly.
+  // (sitemap.xml is rendered per request, see src/app/sitemap.ts)
+  for (const path of ['/feed.xml', '/llms.txt']) revalidatePath(path)
+}
+
 const RESERVED_SLUGS = new Set(['page', 'category', 'feed', 'rss', 'admin', 'new'])
 
 function str(formData: FormData, key: string, max = 500) {
@@ -140,8 +149,7 @@ export async function savePostAction(_prev: SavePostState, formData: FormData): 
     postId = await createPost(input)
   }
 
-  // Refresh every cached public page (home, blog lists, post, sitemap, feed)
-  revalidatePath('/', 'layout')
+  refreshPublicPages()
 
   if (!id) redirect(`/admin/posts/${postId}?created=1`)
 
@@ -159,7 +167,7 @@ export async function deletePostAction(formData: FormData) {
   const id = Number(formData.get('id'))
   if (id) {
     await deletePost(id)
-    revalidatePath('/', 'layout')
+    refreshPublicPages()
   }
   redirect('/admin/posts?deleted=1')
 }

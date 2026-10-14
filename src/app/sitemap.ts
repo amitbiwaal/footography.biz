@@ -2,7 +2,9 @@ import type { MetadataRoute } from 'next'
 import { getAllPublishedForIndex, getCategories } from '@/lib/posts'
 import { absoluteUrl } from '@/lib/site'
 
-export const revalidate = 3600
+// Built on every request: on Vercel the cached sitemap is not refreshed by revalidatePath,
+// so new posts would be missing for hours. Crawlers fetch it rarely and the query is small.
+export const dynamic = 'force-dynamic'
 
 const LEGAL_UPDATED = '2026-10-14'
 
